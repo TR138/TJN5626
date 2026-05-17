@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Hochzeitsreise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;font-size:16px}
+body{
+  background:#F4F1EC;
+  min-height:100vh;
+  font-family:'Inter',system-ui,sans-serif;
+  font-weight:300;
+  color:#2D2D2D;
+  overflow-x:hidden;
+}
+#root{min-height:100vh}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:#F4F1EC}
+::-webkit-scrollbar-thumb{background:#C8D8CC;border-radius:2px}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pop{
+  from{transform:scale(0.5);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+@keyframes lineGrow{
+  from{transform:scaleX(0);transform-origin:left center}
+  to{transform:scaleX(1);transform-origin:left center}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+/* ─── CONFIG ─────────────────────────────────────────────── */
+const CFG = {
+  email:   "christina.hanzelka@outlook.de; pascal.lammer@gmail.com",
+  subject: "Hochzeitsreise - Flüge gebucht",
+  body:    `Hallo,\n\ndie Flüge nach Thailand sind gebucht. \nWir sind von [xx.xx. - xx.xx.] in [XXXX] bzw. von [xx.xx. - xx.xx.] in [XXXX]. \nDamit lösen wird dann auch das Hochzeitsgeschenk ein.\n\nViele Grüße,\n`,
+};
+
+/* ─── TOKENS ─────────────────────────────────────────────── */
+const C = {
+  bg:         "#F4F1EC",
+  surface:    "#FFFFFF",
+  surfaceHi:  "#E8F0EA",
+  accent:     "#4A7C59",
+  accentLo:   "rgba(74,124,89,0.12)",
+  accentMid:  "rgba(74,124,89,0.40)",
+  text:       "#2A2A2A",
+  textMid:    "rgba(42,42,42,0.60)",
+  textLo:     "rgba(42,42,42,0.38)",
+  border:     "rgba(42,42,42,0.08)",
+  borderAcc:  "rgba(74,124,89,0.30)",
+};
+const F = "'Inter',system-ui,sans-serif";
+const FD = "'Cormorant Garamond',Georgia,serif";
+
+/* ─── ICON ───────────────────────────────────────────────── */
+function Icon({name, size=16, color=C.accent, sw=1.4, style={}}){
+  const ref = React.useRef(null);
+  React.useEffect(()=>{
+    if(!ref.current) return;
+    const kebab = name.replace(/([A-Z])/g, m=>'-'+m.toLowerCase()).replace(/^-/,'');
+    ref.current.innerHTML = `<i data-lucide="${kebab}"></i>`;
+    try{
+      lucide.createIcons({
+        nameAttr:'data-lucide',
+        attrs:{width:size,height:size,stroke:color,'stroke-width':String(sw),'stroke-linecap':'round','stroke-linejoin':'round',fill:'none'},
+        icons:{[name]:lucide[name]},
+      });
+    }catch(e){}
+  },[name,size,color,sw]);
+  return React.createElement('span',{ref,style:{display:'inline-flex',alignItems:'center',flexShrink:0,...style}});
+}
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+function Nav({page, go}){
+  const tabs = [{id:'gift',label:'Geschenk'},{id:'tips',label:'Tipps'}];
+  return React.createElement('nav',{style:{
+    position:'fixed',top:0,left:0,right:0,zIndex:200,
+    height:60,
+    display:'flex',alignItems:'center',justifyContent:'space-between',
+    padding:'0 clamp(20px,5vw,52px)',
+    background:'rgba(244,241,236,0.93)',
+    backdropFilter:'blur(16px)',
+    WebkitBackdropFilter:'blur(16px)',
+    borderBottom:`1px solid ${C.border}`,
+  }},
+    React.createElement('span',{style:{
+      fontFamily:F,
+      fontSize:13,fontWeight:400,letterSpacing:'2.5px',
+      textTransform:'uppercase',color:C.accent,
+      cursor:'default',userSelect:'none',
+    }},'Hochzeitsreise'),
+
+    React.createElement('div',{style:{display:'flex',alignItems:'center',gap:4}},
+      tabs.map(t=>{
+        const active = page===t.id;
+        return React.createElement('button',{
+          key:t.id, onClick:()=>go(t.id),
+          style:{
+            fontFamily:F,
+            fontSize:11,fontWeight:active?400:300,
+            letterSpacing:'2px',textTransform:'uppercase',
+            color:active?C.text:C.textMid,
+            background:'none',border:'none',
+            padding:'8px 16px',cursor:'pointer',
+            position:'relative',
+            transition:'color .2s ease',
+          },
+        },
+          t.label,
+          active && React.createElement('div',{style:{
+            position:'absolute',bottom:0,left:16,right:16,
+            height:1.5,background:C.accent,
+            animation:'lineGrow .3s ease both',
+          }}),
+        );
+      }),
+    ),
+  );
+}
+
+/* ─── GIFT PAGE ──────────────────────────────────────────── */
+function GiftPage(){
+  const [sent, setSent] = React.useState(false);
+  const [hover, setHover] = React.useState(false);
+
+  function mail(){
+    window.location.href =
+      `mailto:${CFG.email}?subject=${encodeURIComponent(CFG.subject)}&body=${encodeURIComponent(CFG.body)}`;
+    setTimeout(()=>setSent(true), 900);
+  }
+
+  return React.createElement('div',{style:{
+    minHeight:'100vh',
+    display:'grid',
+    gridTemplateRows:'1fr auto',
+    paddingTop:60,
+  }},
+
+    React.createElement('div',{style:{
+      display:'flex',
+      alignItems:'center',
+      justifyContent:'center',
+      padding:'clamp(40px,8vh,80px) clamp(24px,8vw,80px)',
+    }},
+      React.createElement('div',{style:{
+        maxWidth:520,width:'100%',
+        animation:'fadeUp .7s cubic-bezier(0.16,1,0.3,1) both',
+      }},
+
+        /* eyebrow */
+        React.createElement('p',{style:{
+          fontFamily:F,
+          fontSize:10,fontWeight:400,letterSpacing:'3.5px',
+          textTransform:'uppercase',color:C.accentMid,
+          marginBottom:28,textAlign: 'center',
+        }},'Das Abenteuer beginnt.'),
+
+        /* headline */
+        React.createElement('h1',{style:{
+          fontFamily:FD,
+          fontSize:'clamp(42px,8vw,58px)',
+          fontWeight:300,lineHeight:1.08,
+          color:C.text,
+          letterSpacing:'-0.5px',
+          marginBottom:8,textAlign: 'center',
+        }},'Übernachtung'),
+        React.createElement('h1',{style:{
+          fontFamily:FD,
+          fontSize:'clamp(42px,8vw,58px)',
+          fontWeight:300,lineHeight:1.08,
+          color:C.accent,
+          letterSpacing:'-0.5px',
+          marginBottom:48,textAlign: 'center',
+        }},'nach Wahl.'),
+
+        /* thin rule 
+        React.createElement('div',{style:{
+          width:28,height:1,
+          background:C.accentMid,
+          marginBottom:40,
+        }}),*/
+
+        /* card */
+        React.createElement('div',{style:{
+          background:C.surface,
+          borderRadius:16,
+          padding:'clamp(28px,4vh,40px) clamp(24px,4vw,36px)',
+          marginBottom:28,
+          boxShadow:'0 2px 20px rgba(45,45,45,0.06)',
+          border:`1px solid ${C.border}`,
+          animation:'fadeUp .7s .12s cubic-bezier(0.16,1,0.3,1) both',
+          opacity:0,
+          animationFillMode:'forwards',
+        }},
+
+          !sent
+            ? React.createElement(React.Fragment, null,
+                React.createElement('p',{style:{
+                    fontFamily:F,
+                    fontSize:10,fontWeight:400,letterSpacing:'3.5px',
+                    textTransform:'uppercase',color:C.accentMid,textAlign: 'center',
+                    marginBottom:28,
+                }},
+                  'Bangkok · Koh Samui · Chiang Mai · Phuket',React.createElement('br')
+                ),
+
+                React.createElement('button',{
+                  onClick:mail,
+                  onMouseEnter:()=>setHover(true),
+                  onMouseLeave:()=>setHover(false),
+                  style:{
+                    width:'100%',
+                    padding:'16px 24px',
+                    fontFamily:F,
+                    fontSize:11,fontWeight:400,
+                    letterSpacing:'2.5px',textTransform:'uppercase',
+                    color:hover?'#F4F1EC':C.accent,
+                    background:hover?C.accent:'transparent',
+                    border:`1px solid ${hover?C.accent:C.borderAcc}`,
+                    borderRadius:12,
+                    cursor:'pointer',
+                    display:'flex',alignItems:'center',justifyContent:'center',gap:12,
+                    transition:'all .25s ease',
+                  },
+                },
+                  React.createElement('span',null,'Jetzt einlösen'),
+                  React.createElement(Icon,{name:'ArrowRight',size:14,color:hover?'#F4F1EC':C.accent,sw:1.5}),
+                ),
+              )
+
+            : React.createElement('div',{style:{
+                display:'flex',flexDirection:'column',alignItems:'center',
+                gap:20,padding:'8px 0',
+                animation:'fadeIn .5s ease both',
+              }},
+                React.createElement('div',{style:{
+                  width:52,height:52,borderRadius:'50%',
+                  border:`1px solid ${C.accent}`,
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                  animation:'pop .55s cubic-bezier(0.34,1.56,0.64,1) both',
+                }},
+                  React.createElement(Icon,{name:'Check',size:20,color:C.accent}),
+                ),
+                React.createElement('p',{style:{
+                  fontFamily:F,
+                  fontSize:15,fontWeight:300,lineHeight:1.8,
+                  color:C.textMid,textAlign:'center',
+                }},
+                  'Nachricht raus.',React.createElement('br'),'Das Abenteuer beginnt.',
+                ),
+              ),
+        ),
+
+        /* hint */
+        !sent && React.createElement('div',{style:{
+          display:'flex',alignItems:'center',gap:10,
+          animation:'fadeUp .6s .22s ease both',
+          opacity:0,animationFillMode:'forwards',
+        }},
+          React.createElement(Icon,{name:'Heart',size:13,color:C.textLo,sw:1.4}),
+          React.createElement('p',{style:{
+            fontFamily:F,
+            fontSize:10,fontWeight:300,letterSpacing:'1.5px',
+            textTransform:'uppercase',color:C.textLo,textAlign: 'center',
+          }},'Christina & Pascal '),
+        ),
+      ),
+    ),
+
+    /* footer stripe */
+    React.createElement('div',{style:{
+      padding:'20px clamp(24px,8vw,80px)',
+      borderTop:`1px solid ${C.border}`,
+      display:'flex',alignItems:'center',justifyContent:'space-between',
+      flexWrap:'wrap',gap:8,
+    }},
+      /*React.createElement(Icon,{name:'Heart',size:13,color:C.textLo,sw:1.4}),*/
+      React.createElement('p',{style:{fontFamily:F,fontSize:10,fontWeight:300,letterSpacing:'2px',textTransform:'uppercase',color:C.textLo}},'Gültig bis 2030 :)'),
+    ),
+  );
+}
+
+/* ─── TIPS DATA ──────────────────────────────────────────── */
+const TIPS = [
+  {cat:'Restaurant',  title:'Jay Fai',               sub:'Die Legende',      body:'Michelin-Stern Street Food. Das Crab Omelette ist Pflicht. Reservierung Wochen im Voraus — offenes Feuer, Schutzbrille, kein Schnickschnack.',  meta:'Bangrak',           icon:'UtensilsCrossed'},
+  {cat:'Rooftop',     title:'Vertigo & Moon Bar',    sub:'Sundowner',        body:'61. Etage, Banyan Tree Hotel. Offener Rooftop, 360°-Blick. Zur Golden Hour ankommen, smartes Casual erforderlich.',                              meta:'Silom',             icon:'Sunset'},
+  {cat:'Kultur',      title:'Wat Pho',               sub:'Liegender Buddha', body:'46 Meter Gold. Vor 8:30 Uhr kommen, bevor die Gruppen eintreffen. Direkt daneben: Fähre über den Chao Phraya.',                                  meta:'Rattanakosin',      icon:'Landmark'},
+  {cat:'Markt',       title:'Or Tor Kor Market',     sub:'Frühstück',        body:'Sauberster Markt der Stadt. Frische Mango, Pad Thai, Somtam. Neben dem Chatuchak Weekend Market.',                                              meta:'Chatuchak',         icon:'ShoppingBasket'},
+  {cat:'Wellness',    title:'Wat Pho Massage',       sub:'Traditional Thai', body:'Original, günstig, direkt am Tempel. 1h Traditional Thai rund 420 THB. Hier wird es tatsächlich gelehrt.',                                      meta:'Rattanakosin',      icon:'Sparkles'},
+  {cat:'Bar',         title:'Vesper',                sub:'Cocktails',        body:'Beste Cocktailbar der Stadt. Thai-inspired drinks, entspannte Atmosphäre. Reservierung empfohlen.',                                              meta:'Silom',             icon:'GlassWater'},
+  {cat:'Erlebnis',    title:'Chao Phraya',           sub:'Bei Nacht',        body:'Tempel und Skyline beleuchtet. Öffentliche Fähre ab Tha Chang Pier abends — günstig und unvergesslich.',                                        meta:'Riverside',         icon:'Waves'},
+  {cat:'Geheimtipp',  title:'Viertel Ari',           sub:'Echtes Bangkok',   body:'Kein Touristenstrom. Lokale Cafés, kleine Restaurants, entspannte Stimmung. BTS Ari Station — einfach treiben lassen.',                         meta:'Ari',               icon:'MapPin'},
+  {cat:'Transport',   title:'Grab',                  sub:'Immer',            body:'Nie ein Straßentaxi ohne Meter. Grab: Preis vor Abfahrt fix. BTS Skytrain für die Stoßzeiten.',                                                 meta:'Stadtgebiet',       icon:'Car'},
+  {cat:'Geld',        title:'SuperRich Exchange',    sub:'Bester Kurs',      body:'Nicht am Flughafen tauschen. SuperRich oder Vasu Exchange in der Stadt geben deutlich mehr.',                                                   meta:'Mehrere Standorte', icon:'Banknote'},
+  {cat:'Praktisch',   title:'Tourist SIM',           sub:'Am Flughafen',     body:'AIS oder DTAC direkt nach dem Zoll. 30 Tage unlimitierte Daten rund 350 THB. Google Maps ist in Bangkok Pflicht.',                              meta:'Suvarnabhumi',      icon:'Wifi'},
+  {cat:'Etikette',    title:'Tempel-Knigge',         sub:'Respekt',          body:'Schultern und Knie bedeckt. Schuhe aus. Füße nie Richtung Buddha zeigen. Sarongs werden vor Ort ausgeliehen.',                                  meta:'Alle Tempel',       icon:'HeartHandshake'},
+];
+
+/* ─── TIPS PAGE ──────────────────────────────────────────── */
+function TipsPage(){
+  return React.createElement('div',{style:{
+    minHeight:'100vh',
+    paddingTop:60,
+    padding:'clamp(80px,12vh,112px) clamp(24px,5vw,56px) clamp(60px,8vh,80px)',
+  }},
+
+    /* header */
+    React.createElement('div',{style:{
+      marginBottom:'clamp(32px,5vh,48px)',
+      paddingBottom:'clamp(24px,3vh,32px)',
+      borderBottom:`1px solid ${C.border}`,
+      display:'flex',alignItems:'flex-end',justifyContent:'space-between',
+      flexWrap:'wrap',gap:12,
+      animation:'fadeUp .65s cubic-bezier(0.16,1,0.3,1) both',
+    }},
+      React.createElement('div',null,
+        React.createElement('p',{style:{
+          fontFamily:F,
+          fontSize:10,fontWeight:300,letterSpacing:'3.5px',
+          textTransform:'uppercase',color:C.accentMid,marginBottom:12,
+        }},'Kuratiert · Thailand'),
+        React.createElement('h2',{style:{
+          fontFamily:FD,
+          fontSize:'clamp(28px,5vw,46px)',fontWeight:300,
+          lineHeight:1.1,color:C.text,letterSpacing:'-0.3px',
+        }},
+          'Was ihr ',
+          React.createElement('span',{style:{color:C.accent}},'wissen'),
+          ' solltet.',
+        ),
+      ),
+      React.createElement('p',{style:{
+        fontFamily:F,
+        fontSize:10,fontWeight:300,letterSpacing:'2px',
+        textTransform:'uppercase',color:C.textLo,paddingBottom:3,
+      }},`${TIPS.length} Empfehlungen`),
+    ),
+
+    /* grid */
+    React.createElement('div',{style:{
+      display:'grid',
+      gridTemplateColumns:'repeat(auto-fill,minmax(min(100%,280px),1fr))',
+      gap:12,
+      animation:'fadeUp .65s .1s cubic-bezier(0.16,1,0.3,1) both',
+      opacity:0,animationFillMode:'forwards',
+    }},
+      TIPS.map((t,i)=>React.createElement(TipCard,{key:i,t})),
+    ),
+  );
+}
+
+function TipCard({t}){
+  const [h, setH] = React.useState(false);
+  return React.createElement('div',{
+    onMouseEnter:()=>setH(true),
+    onMouseLeave:()=>setH(false),
+    style:{
+      padding:'24px 22px',
+      background:h?C.surfaceHi:C.surface,
+      borderRadius:16,
+      border:`1px solid ${h?C.borderAcc:C.border}`,
+      boxShadow:h?'0 8px 28px rgba(45,45,45,0.09)':'0 2px 10px rgba(45,45,45,0.05)',
+      transition:'background .22s ease,border-color .22s ease,box-shadow .22s ease',
+      cursor:'default',
+    },
+  },
+    React.createElement('div',{style:{
+      display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,
+    }},
+      React.createElement('span',{style:{
+        fontFamily:F,
+        fontSize:9,fontWeight:400,letterSpacing:'3px',
+        textTransform:'uppercase',color:C.accentMid,
+      }},t.cat),
+      React.createElement(Icon,{name:t.icon,size:14,color:h?C.accent:C.textLo,sw:1.4}),
+    ),
+    React.createElement('p',{style:{
+      fontFamily:FD,
+      fontSize:18,fontWeight:400,color:C.text,
+      marginBottom:2,lineHeight:1.25,letterSpacing:'-0.2px',
+    }},t.title),
+    React.createElement('p',{style:{
+      fontFamily:F,
+      fontSize:12,fontWeight:300,color:C.textMid,
+      marginBottom:14,letterSpacing:'0.2px',
+    }},t.sub),
+    React.createElement('p',{style:{
+      fontFamily:F,
+      fontSize:12.5,fontWeight:300,lineHeight:1.75,color:C.textMid,
+    }},t.body),
+    React.createElement('div',{style:{
+      marginTop:16,display:'flex',alignItems:'center',gap:6,
+    }},
+      React.createElement(Icon,{name:'MapPin',size:10,color:C.textLo,sw:1.5}),
+      React.createElement('p',{style:{
+        fontFamily:F,
+        fontSize:9,fontWeight:300,letterSpacing:'2px',
+        textTransform:'uppercase',color:C.textLo,
+      }},t.meta),
+    ),
+  );
+}
+
+/* ─── APP ─────────────────────────────────────────────────── */
+function App(){
+  const [page, setPage] = React.useState('gift');
+  function go(id){
+    setPage(id);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  return React.createElement(React.Fragment,null,
+    React.createElement(Nav,{page,go}),
+    page==='gift' && React.createElement(GiftPage),
+    page==='tips' && React.createElement(TipsPage),
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
