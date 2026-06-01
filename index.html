@@ -149,13 +149,37 @@ function GiftPage(){
     e('div',{style:{maxWidth:640,margin:'0 auto',textAlign:'center',animation:'fadeUp .8s ease both'}},
       e('p',{style:{fontFamily:F,fontSize:10,fontWeight:400,letterSpacing:'4px',textTransform:'uppercase',color:C.accentMid,marginBottom:24}},
         'Ein Hochzeitsgeschenk'),
-      e('h1',{style:{fontFamily:FD,fontSize:'clamp(48px,8vw,80px)',fontWeight:300,lineHeight:.96,color:C.text,letterSpacing:'-1px',marginBottom:0}},
-        'Das Abenteuer'),
-      e('h1',{style:{fontFamily:FD,fontSize:'clamp(48px,8vw,80px)',fontWeight:300,fontStyle:'italic',lineHeight:.96,color:C.accent,letterSpacing:'-1px',marginBottom:32}},
-        'beginnt.'),
-      divider(),
-      e('p',{style:{fontFamily:FD,fontSize:20,fontStyle:'italic',fontWeight:300,color:C.textMid,marginBottom:24,letterSpacing:'.3px'}},
-        'Liebe Theresa, lieber Jonas,'),
+    e('h1',{style:{
+        fontFamily:FD,
+        fontSize:'clamp(40px,7vw,68px)', // kleiner
+        fontWeight:300,
+        lineHeight:.96,
+        color:C.text,
+        letterSpacing:'-1px',
+        marginBottom:0
+    }}, 'Das Abenteuer'),
+
+    e('h1',{style:{
+        fontFamily:FD,
+        fontSize:'clamp(40px,7vw,68px)', // kleiner
+        fontWeight:300,
+        fontStyle:'italic',
+        lineHeight:.96,
+        color:C.accent,
+        letterSpacing:'-1px',
+        marginBottom:32
+    }}, 'beginnt.'),
+
+    e('p',{style:{
+        fontFamily:FD,
+        fontSize:26, // größer
+        fontStyle:'italic',
+        fontWeight:300,
+        color:C.textMid,
+        marginBottom:28,
+        letterSpacing:'.3px'
+    }}, 'Liebe Theresa, lieber Jonas,'),
+
       e('p',{style:{fontFamily:F,fontSize:15,fontWeight:300,lineHeight:1.9,color:C.textMid,marginBottom:20}},
         'für eure Hochzeit wünschen wir euch vor allem gemeinsame Erinnerungen. Deshalb möchten wir einen kleinen Teil eurer Hochzeitsreise begleiten.'),
       e('p',{style:{fontFamily:F,fontSize:15,fontWeight:300,lineHeight:1.9,color:C.textMid,marginBottom:20}},
@@ -186,18 +210,6 @@ function GiftPage(){
         lineHeight:1.25,
         letterSpacing:'-.3px',
       }},'„Sammelt Geschichten statt Souvenirs.“'),
-      e('p',{style:{
-        fontFamily:FD,
-        fontSize:'clamp(15px,2vw,19px)',
-        fontWeight:300,fontStyle:'italic',
-        color:'rgba(255,255,255,0.42)',
-        lineHeight:1.75,
-        marginTop:20,
-      }},
-        'Dieses Geschenk ist nicht für eine bestimmte Reise gedacht.',
-        e('br'),
-        'Es ist für die Erinnerungen, die daraus entstehen.',
-      ),
     ),
   );
 
@@ -209,10 +221,6 @@ function GiftPage(){
       maxWidth:560,margin:'0 auto',textAlign:'center',
       animation:'fadeUp .7s ease both',
     }},
-      e('p',{style:{fontFamily:F,fontSize:10,fontWeight:400,letterSpacing:'4px',textTransform:'uppercase',color:C.accentMid,marginBottom:20}},
-        'Das Geschenk'),
-      e('h2',{style:{fontFamily:FD,fontSize:'clamp(28px,5vw,48px)',fontWeight:300,lineHeight:1.1,color:C.text,marginBottom:40}},
-        'Für euren besonderen Moment'),
       e('div',{style:{
         background:C.surface,
         borderRadius:20,
@@ -235,20 +243,31 @@ function GiftPage(){
   /* ── S5: CLOSING ── */
   const S5 = section([
     e('div',{style:{maxWidth:560,margin:'0 auto',textAlign:'center'}},
-      e('h2',{style:{
-        fontFamily:FD,
-        fontSize:'clamp(48px,9vw,88px)',
-        fontWeight:300,fontStyle:'italic',
-        lineHeight:.96,color:C.text,
-        letterSpacing:'-1.5px',
-        marginBottom:32,
-      }},'Wir freuen uns auf die Geschichten, die ihr mit nach Hause bringt.'),
-      e('p',{style:{fontFamily:F,fontSize:13,fontWeight:300,color:C.textMid,lineHeight:1.8,marginBottom:40}},
-        'Wir freuen uns auf die Geschichten, die ihr mit nach Hause bringt.'),
-      e('div',{style:{width:32,height:1,background:C.accentMid,margin:'0 auto 32px'}}),
-      e('p',{style:{fontFamily:FD,fontSize:20,fontStyle:'italic',fontWeight:300,color:C.textMid,lineHeight:1.7}},
-        'Mit Liebe,',React.createElement('br'),
-        e('span',{style:{color:C.accent}},'Christina & Pascal'),
+     
+e('p',{style:{
+ fontFamily:F,
+ fontSize:15,
+ fontWeight:300,
+ lineHeight:1.9,
+ color:C.textMid,
+ marginBottom:40
+}},
+'Wir freuen uns auf die Geschichten, die ihr mit nach Hause bringt.'
+),
+
+e('p',{style:{
+ fontFamily:FD,
+ fontSize:26,
+ fontStyle:'italic',
+ fontWeight:300,
+ color:C.textMid,
+ lineHeight:1.6
+}},
+'Mit Liebe,',
+React.createElement('br'),
+'Christina & Pascal'
+),
+
       ),
     ),
   ]);
