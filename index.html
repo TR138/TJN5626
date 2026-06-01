@@ -165,10 +165,10 @@ function GiftPage(){
 
   /* ── S2: IMAGE + QUOTE ── */
   const S2 = e('section',{style:{background:C.bg}},
-    /* photo: upload reise.png to your GitHub repo */
+    /* photo: upload header.png to your GitHub repo */
     e('div',{style:{width:'100%',height:'clamp(280px,45vw,560px)',overflow:'hidden'}},
       e('img',{
-        src:'reise.png',alt:'Reisebild',
+        src:'header.png',alt:'Reisebild',
         style:{width:'100%',height:'100%',objectFit:'cover',display:'block'},
         onError:(ev)=>{ev.target.style.display='none';ev.target.parentNode.style.background='linear-gradient(160deg,#2D4A38 0%,#3D6B50 25%,#5A8C6A 45%,#4A7C59 60%,#2A4A35 80%,#1A3025 100%)';},
       }),
